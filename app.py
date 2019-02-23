@@ -13,11 +13,26 @@ base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
 plex_db_path = "C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
 
-anime = ("Anime", "3")
-adult = ("Adult", "11")
-family = ("Family", "13")
-kids = ("Kids", "12")
-movies = ("Movies", "2")
+anime = {
+    "path_key": "Anime",
+    "plex_section": "3"
+}
+adult = {
+    "path_key": "Adult",
+    "plex_section": "11"
+}
+family = {
+    "path_key": "Family",
+    "plex_section": "13"
+}
+kids = {
+    "path_key": "Kids",
+    "plex_section": "12"
+}
+movie = {
+    "path_key": "Movies",
+    "plex_section": "2"
+}
 
 
 app = Flask(__name__)
@@ -26,29 +41,28 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.route("/scan", methods=["POST"])
 def scan():
-    logging.debug(f"Received {request.form['folder']}")
-    if "Anime" in os.path.dirname(request.form["folder"]):
-        section = "3"
+    if anime['path_key'] in os.path.dirname(request.form["folder"]):
+        section = anime['plex_section']
         file_path = __translate_file_path(request.form["folder"])
         __wait_for_path(file_path)
 
-    elif "Adult" in os.path.dirname(request.form["folder"]):
-        section = "11"
+    elif adult['path_key'] in os.path.dirname(request.form["folder"]):
+        section = adult['plex_section']
         file_path = __translate_file_path(request.form["folder"])
         __wait_for_path(file_path)
 
-    elif "Family" in os.path.dirname(request.form["folder"]):
-        section = "13"
+    elif family['path_key'] in os.path.dirname(request.form["folder"]):
+        section = family['plex_section']
         file_path = __translate_file_path(request.form["folder"])
         __wait_for_path(file_path)
 
-    elif "Kids" in os.path.dirname(request.form["folder"]):
-        section = "12"
+    elif kids['path_key'] in os.path.dirname(request.form["folder"]):
+        section = kids['plex_section']
         file_path = __translate_file_path(request.form["folder"])
         __wait_for_path(file_path)
 
-    elif "Movies" in os.path.dirname(request.form["folder"]):
-        section = "2"
+    elif movie['path_key'] in os.path.dirname(request.form["folder"]):
+        section = movie['plex_section']
         file_path = __translate_file_path(request.form["folder"])
         __wait_for_path(file_path)
     else:
@@ -62,9 +76,14 @@ def scan():
     return jsonify(__verify_import(request.form["folder"]))
 
 
+def __parse_request(media_type):
+    if "Movies" in os.path.dirname(request.form["folder"]):
+        section = "2"
+        file_path = __translate_file_path(request.form["folder"])
+        __wait_for_path(file_path)
+
 def __wait_for_path(path):
     logging.debug(f"Looking for {path}")
-    p = path
     while not path.exists():
         logging.debug(f"Path does not exist: {path}")
         sleep(5)
