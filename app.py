@@ -1,4 +1,3 @@
-import logging
 import os
 import sqlite3
 import subprocess
@@ -8,6 +7,7 @@ from time import sleep
 from flask import Flask
 from flask import jsonify
 from flask import request
+from logzero import logger
 
 base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
@@ -18,25 +18,25 @@ path_keys = [
     ("Anime", "3"),
     ("Adult", "11"),
     ("Kids", "12"),
-    ("Family", "13")
+    ("Family", "13"),
 ]
 
 app = Flask(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
-@app.route("/scan", methods=["POST"])
+@app.route("/scan", methods=["post"])
 def scan():
     file_path = None
     section = None
 
     for key, section in path_keys:
         if key in os.path.dirname(request.form["folder"]):
-            file_path = __translate_file_path(request.form['folder'])
+            file_path = __translate_file_path(request.form["folder"])
             __wait_for_path(file_path)
+            break
 
     if file_path:
-        logging.debug("The file exists! Now let's give it a little longer (2 mins)")
+        logger.debug("The file exists! Now let's give it a little longer (2 mins)")
         sleep(1)
         while not __verify_import(request.form["folder"]):
             __scan(file_path, section)
@@ -46,9 +46,9 @@ def scan():
 
 
 def __wait_for_path(path):
-    logging.debug(f"Looking for {path}")
+    logger.debug(f"Looking for {path}")
     while not path.exists():
-        logging.debug(f"Path does not exist: {path}")
+        logger.debug(f"Path does not exist: {path}")
         sleep(5)
     return path.exists()
 
@@ -57,15 +57,15 @@ def __translate_file_path(folder):
     base = base_rclone_media_path
     r_base = remote_mount_folder_name
     stripped_remote_path = folder.split(r_base)[1]
-    logging.debug(f"stripped path: {str(stripped_remote_path)}")
+    logger.debug(f"stripped path: {str(stripped_remote_path)}")
     file_path = base + stripped_remote_path
     file_path = Path(file_path)
-    logging.debug(f"Translated_file_path: {file_path}")
+    logger.debug(f"Translated_file_path: {file_path}")
     return file_path
 
 
 def __scan(folder, section):
-    logging.debug(f"Scanning {folder} into {section}")
+    logger.debug(f"Scanning {folder} into {section}")
     result = subprocess.Popen(
         f'"E:/Utils/Plex/Plex Media Scanner.exe" -c {section} -s -r --no-thumbs -d "{folder.parent}"',
         stdout=subprocess.PIPE,
@@ -77,17 +77,18 @@ def __scan(folder, section):
 def __verify_import(file_name):
     file = __translate_file_path(file_name)
     file = PureWindowsPath(file)
-    logging.debug(f"Verifying {file} was imported")
+    logger.debug(f"Verifying {file} was imported")
     db = sqlite3.connect(plex_db_path)
     cursor = db.cursor()
-    logging.debug(f"Searching for {file} in db")
+    logger.debug(f"Searching for {file} in db")
     cursor.execute(f"SELECT * FROM media_parts WHERE file=?", (str(file),))
     for row in cursor.fetchall():
-        logging.debug(f"current row: {row}")
+        logger.debug(f"current row: {row}")
         try:
-            logging.debug(f"We found it! {row[0]}")
+            logger.debug(f"We found it! {row[0]}")
             return dict(
-                id=row[0], media_item_id=row[1],
+                id=row[0],
+                media_item_id=row[1],
                 directory_id=row[2],
                 hash=row[3],
                 open_subtitle_hash=row[4],
@@ -97,7 +98,8 @@ def __verify_import(file_name):
                 duration=row[8],
                 created_at=row[9],
                 deleted_at=row[10],
-                extra_data=row[11])
+                extra_data=row[11],
+            )
 
         except Exception as e:
             logging.error(e)
