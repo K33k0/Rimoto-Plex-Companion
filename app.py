@@ -4,9 +4,7 @@ import subprocess
 from pathlib import Path, PureWindowsPath
 from time import sleep
 
-from flask import Flask
-from flask import jsonify
-from flask import request
+import hug
 from logzero import logger
 
 base_rclone_media_path = "C:/Media"
@@ -20,29 +18,26 @@ path_keys = [
     ("Kids", "12"),
     ("Family", "13"),
 ]
-
-app = Flask(__name__)
-
-
-@app.route("/scan", methods=["post"])
-def scan():
+@hug.cli()
+@hug.get('/scan')
+def scan(remote_file_path):
     file_path = None
     section = None
 
     for key, section in path_keys:
-        if key in os.path.dirname(request.form["folder"]):
-            file_path = __translate_file_path(request.form["folder"])
+        if key in os.path.dirname(remote_file_path):
+            file_path = __translate_file_path(remote_file_path)
             __wait_for_path(file_path)
             break
 
     if file_path:
         logger.debug("The file exists! Now let's give it a little longer (2 mins)")
         sleep(1)
-        while not __verify_import(request.form["folder"]):
+        while not __verify_import(remote_file_path):
             __scan(file_path, section)
-        return jsonify(__verify_import(request.form["folder"]))
+        return __verify_import(remote_file_path)
     else:
-        return jsonify(False)
+        return False
 
 
 def __wait_for_path(path):
@@ -102,16 +97,6 @@ def __verify_import(file_name):
             )
 
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return False
 
-
-def main():
-    app.config["host"] = "0.0.0.0"
-    app.config["debug"] = True
-    app.config["port"] = 5000
-    app.run()
-
-
-if __name__ == "__main__":
-    main()
