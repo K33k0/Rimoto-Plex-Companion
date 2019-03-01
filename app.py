@@ -26,11 +26,7 @@ def scan(remote_file_path):
     file_path = None
     section = None
 
-    for key, section in path_keys:
-        if key in os.path.dirname(remote_file_path):
-            file_path = __translate_file_path(remote_file_path)
-            __wait_for_path(file_path)
-            break
+    file_path, section = __categorize(remote_file_path)
 
     if file_path:
         logger.debug("The file exists! Now let's give it a little longer (30 Seconds)")
@@ -40,6 +36,14 @@ def scan(remote_file_path):
         return __verify_import(remote_file_path)
     else:
         return False
+
+
+def __categorize(file_path):
+    for key, section in path_keys:
+        if key in os.path.dirname(file_path):
+            file_path = __translate_file_path(file_path)
+            __wait_for_path(file_path)
+            return file_path, section
 
 
 def __wait_for_path(path):
@@ -81,7 +85,6 @@ def __scan(folder, section):
     except Exception:
         return False
     return True
-
 
 
 def __verify_import(file_name):
