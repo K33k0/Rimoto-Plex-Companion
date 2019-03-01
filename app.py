@@ -18,8 +18,10 @@ path_keys = [
     ("Kids", "12"),
     ("Family", "13"),
 ]
+
+
 @hug.cli()
-@hug.get('/scan')
+@hug.get("/scan")
 def scan(remote_file_path):
     file_path = None
     section = None
@@ -31,8 +33,8 @@ def scan(remote_file_path):
             break
 
     if file_path:
-        logger.debug("The file exists! Now let's give it a little longer (2 mins)")
-        sleep(1)
+        logger.debug("The file exists! Now let's give it a little longer (30 Seconds)")
+        sleep(30)
         while not __verify_import(remote_file_path):
             __scan(file_path, section)
         return __verify_import(remote_file_path)
@@ -59,44 +61,51 @@ def __translate_file_path(folder):
     return file_path
 
 
+def __read_db(file_path):
+    db = sqlite3.connect(plex_db_path)
+    cursor = db.cursor()
+    logger.debug(f"Searching for {file_path} in db")
+    cursor.execute(f"SELECT * FROM media_parts WHERE file=?", (str(file_path),))
+    return cursor.fetchone()
+
+
 def __scan(folder, section):
     logger.debug(f"Scanning {folder} into {section}")
     result = subprocess.Popen(
         f'"E:/Utils/Plex/Plex Media Scanner.exe" -c {section} -s -r --no-thumbs -d "{folder.parent}"',
         stdout=subprocess.PIPE,
     )
-    while result.poll() is None:
-        sleep(5)
+    try:
+        while result.poll() is None:
+            sleep(5)
+    except Exception:
+        return False
+    return True
+
 
 
 def __verify_import(file_name):
     file = __translate_file_path(file_name)
     file = PureWindowsPath(file)
     logger.debug(f"Verifying {file} was imported")
-    db = sqlite3.connect(plex_db_path)
-    cursor = db.cursor()
-    logger.debug(f"Searching for {file} in db")
-    cursor.execute(f"SELECT * FROM media_parts WHERE file=?", (str(file),))
-    for row in cursor.fetchall():
-        logger.debug(f"current row: {row}")
-        try:
-            logger.debug(f"We found it! {row[0]}")
-            return dict(
-                id=row[0],
-                media_item_id=row[1],
-                directory_id=row[2],
-                hash=row[3],
-                open_subtitle_hash=row[4],
-                file=row[5],
-                index=row[6],
-                size=row[7],
-                duration=row[8],
-                created_at=row[9],
-                deleted_at=row[10],
-                extra_data=row[11],
-            )
+    row = __read_db(file)
+    try:
+        logger.debug(f"We found it! {row[0]}")
+        return dict(
+            id=row[0],
+            media_item_id=row[1],
+            directory_id=row[2],
+            hash=row[3],
+            open_subtitle_hash=row[4],
+            file=row[5],
+            index=row[6],
+            size=row[7],
+            duration=row[8],
+            created_at=row[9],
+            deleted_at=row[10],
+            extra_data=row[11],
+        )
 
-        except Exception as e:
-            logger.error(e)
-            return False
-
+    except Exception as e:
+        logger.error(e)
+        return False
