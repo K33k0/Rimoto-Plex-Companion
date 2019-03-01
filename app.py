@@ -23,9 +23,6 @@ path_keys = [
 @hug.cli()
 @hug.get("/scan")
 def scan(remote_file_path):
-    file_path = None
-    section = None
-
     file_path, section = __categorize(remote_file_path)
 
     if file_path:
