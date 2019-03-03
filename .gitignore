@@ -2,3 +2,5 @@
 plex_scanner.egg-info
 venv
 .idea
+
+*.pyc
