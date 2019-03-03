@@ -2,7 +2,6 @@
 // @name     Sonarr: Plex scan
 // @version  1
 // @include  https://k33k00.com/sonarr/calendar
-// @include  https://k3k300.com/radarr/calendar
 // ==/UserScript==
 
 

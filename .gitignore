@@ -1,0 +1,4 @@
+.pytest_cache
+plex_scanner.egg-info
+venv
+.idea
