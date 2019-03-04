@@ -23,7 +23,7 @@ path_keys = [
 @hug.cli()
 @hug.get("/scan")
 def scan(remote_file_path, request):
-    logger.info(f"Request from {request.headers['X-REAL-IP']} to {path}")
+    logger.info(f"Request from {request.headers['X-REAL-IP']} to {remote_file_path}")
     file_path, section = __categorize(remote_file_path)
     if not __wait_grace_period(file_path):
         return False
