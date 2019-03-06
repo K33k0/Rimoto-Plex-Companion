@@ -2,6 +2,7 @@
 // @name     Sonarr: Plex scan
 // @version  1
 // @include  https://k33k00.com/sonarr/calendar
+// @updateURL https://raw.githubusercontent.com/MDCEY/Rimoto_plex_companion/develop/sonarr-remote-scanner.userscript.js
 // ==/UserScript==
 
 
