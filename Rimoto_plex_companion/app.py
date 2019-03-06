@@ -23,7 +23,8 @@ path_keys = [
 @hug.cli()
 @hug.get("/scan")
 def scan(remote_file_path, request):
-    remote_file_path = ','.join(remote_file_path)
+    if isinstance(remote_file_path,list):
+        remote_file_path = ','.join(remote_file_path)
     logger.info(f"Request from {request.headers['X-REAL-IP']} to {remote_file_path}")
     file_path, section = __categorize(remote_file_path)
     while not __verify_import(remote_file_path):
@@ -105,3 +106,9 @@ def __verify_import(file_name):
     except Exception as e:
         logger.error(e)
         return False
+
+def main():
+    hug.development_runner._start_api(__name__, "127.0.0.1", 5000, True, show_intro=True)
+
+if __name__ == "__main__":
+    main()

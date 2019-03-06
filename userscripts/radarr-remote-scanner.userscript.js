@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name     Sonarr: Plex scan
-// @version  1.0.1
-// @include  https://k33k00.com/sonarr/calendar
-// @updateURL https://raw.githubusercontent.com/MDCEY/Rimoto_plex_companion/develop/sonarr-remote-scanner.userscript.js
+// @name     Radarr: Plex scan
+// @version  1
+// @include  https://k33k00.com/radarr/activity/history
+// @updateURL https://raw.githubusercontent.com/MDCEY/Rimoto_plex_companion/develop/userscripts/radarr-remote-scanner.userscript.js
 // ==/UserScript==
 
 
@@ -15,7 +15,7 @@ function reqListener() {
 
 
 function sendScanRequest(path) {
-    let url = `${serverUrl}?remote_file_path=${encodeURI(path)}`;
+    let url = `${serverUrl}?remote_file_path=${path}`;
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", reqListener);
     oReq.open("GET", url);
@@ -48,5 +48,5 @@ function waitForElementToDissapear(selector, time) {
     }
 }
 
-console.log("Initializing Userscript - Sonarr: Plex scan");
-waitForElementToDisplay(".string-cell", 1000);
+console.log("Initializing Userscript - Radarr: Plex scan");
+waitForElementToDisplay(".dl-horizontal > dd:nth-child(6)", 1000);
