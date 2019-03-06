@@ -23,21 +23,12 @@ path_keys = [
 @hug.cli()
 @hug.get("/scan")
 def scan(remote_file_path, request):
+    remote_file_path = ','.join(remote_file_path)
     logger.info(f"Request from {request.headers['X-REAL-IP']} to {remote_file_path}")
     file_path, section = __categorize(remote_file_path)
-    if not __wait_grace_period(file_path):
-        return False
     while not __verify_import(remote_file_path):
         __scan(file_path, section)
     return __verify_import(remote_file_path)
-
-
-def __wait_grace_period(file_path):
-    if file_path:
-        logger.debug("The file exists! Now let's give it a little longer (30 Seconds)")
-        sleep(30)
-        return True
-    return False
 
 
 def __categorize(file_path):
