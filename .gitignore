@@ -5,3 +5,5 @@ venv
 \.vscode/
 __pycache__
 .venv
+rimoto_plex_companion.egg-info/
+db.json
