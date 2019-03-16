@@ -9,7 +9,7 @@ import hug
 import logzero
 from logzero import logger
 
-db = TinyDB("db.json")
+db = TinyDB("db.json", sort_keys=True, indent=4, separators=(',', ': '))
 inbound = db.table("inbound")
 success = db.table("success")
 base_rclone_media_path = "C:/Media"
@@ -56,7 +56,7 @@ def import_to_plex(windows_folder_path:Path , section):
     try:
         while result.poll() is None:
             logger.debug("Waiting for Popen to end")
-            sleep(15)
+            sleep(60)
     except Exception as e:
         #TODO Figure what exceptions this can throw and narrow down the except clause
         logger.error(e)
@@ -96,6 +96,8 @@ def main():
             category = get_media_category(rec['remote_path'])
             local_path = remote_file_to_local_file(rec['remote_path'])
             local_path_existence = wait_path(local_path)
+            if not local_path_existence:
+                logger.warning("Local path timed out. Not found.")
             plex_import = import_to_plex(Path(local_path).parent, category)
             local_file_imported = verify_import_in_db(local_path)
             if local_file_imported:

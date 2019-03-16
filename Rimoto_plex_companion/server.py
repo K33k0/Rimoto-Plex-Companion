@@ -9,7 +9,7 @@ import hug
 import logzero
 from logzero import logger
 
-db = TinyDB("db.json")
+db = TinyDB("db.json", sort_keys=True, indent=4, separators=(',', ': '))
 table = db.table('inbound')
 logfile = "I:/Logs/Rimoto.log"
 
