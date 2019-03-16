@@ -11,7 +11,7 @@ from logzero import logger
 
 db = TinyDB("db.json", sort_keys=True, indent=4, separators=(',', ': '))
 table = db.table('inbound')
-logfile = "I:/Logs/Rimoto.log"
+logfile = "I:/Logs/Rimoto/inbound.log"
 
 logzero.logfile(logfile, maxBytes=4028)
 

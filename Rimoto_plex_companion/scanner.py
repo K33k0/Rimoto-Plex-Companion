@@ -15,7 +15,7 @@ success = db.table("success")
 base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
 plex_db_path = "C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
-logfile = "I:/Logs/Rimoto.log"
+logfile = "I:/Logs/Rimoto/scanner.log"
 plex_scanner_path="E:/Utils/Plex/Plex Media Scanner.exe"
 
 logzero.logfile(logfile, maxBytes=4028)
