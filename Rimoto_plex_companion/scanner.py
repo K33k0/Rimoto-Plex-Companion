@@ -10,6 +10,8 @@ import logzero
 from logzero import logger
 
 db = TinyDB("db.json")
+inbound = db.table("inbound")
+success = db.table("success")
 base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
 plex_db_path = "C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
@@ -90,14 +92,15 @@ def verify_import_in_db(windows_file_path: PureWindowsPath):
 
 def main():
     while True:
-        for rec in db.all():
+        for rec in inbound.all():
             category = get_media_category(rec['remote_path'])
             local_path = remote_file_to_local_file(rec['remote_path'])
             local_path_existence = wait_path(local_path)
             plex_import = import_to_plex(Path(local_path).parent, category)
             local_file_imported = verify_import_in_db(local_path)
             if local_file_imported:
-                db.remove(doc_ids=[rec.doc_id])
+                success.insert(local_file_imported)
+                inbound.remove(doc_ids=[rec.doc_id])
         sleep(60)
 
 if __name__ == "__main__":

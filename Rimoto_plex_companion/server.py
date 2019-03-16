@@ -10,7 +10,7 @@ import logzero
 from logzero import logger
 
 db = TinyDB("db.json")
-
+table = db.table('inbound')
 logfile = "I:/Logs/Rimoto.log"
 
 logzero.logfile(logfile, maxBytes=4028)
@@ -30,7 +30,7 @@ def scan(remote_file_path, request):
     if isinstance(remote_file_path,list):
         remote_file_path = ','.join(remote_file_path)
     logger.info(f"Request from {request.headers['X-REAL-IP']} to {remote_file_path}")
-    result = db.insert({'remote_path': remote_file_path})
+    result = table.insert({'remote_path': remote_file_path})
     return result
 
 
