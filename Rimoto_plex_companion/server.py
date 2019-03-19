@@ -33,6 +33,15 @@ def scan(remote_file_path, request):
     result = table.insert({'remote_path': remote_file_path})
     return result
 
+@hug.post("/scan")
+def scan_post(body):
+    result = table.insert(
+        {
+        "remote_path": body["file_path"],
+         "timestamp": body["timestamp"] 
+         }
+        )
+    return result
 
 
 
