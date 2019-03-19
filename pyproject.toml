@@ -17,10 +17,10 @@ black = {version = "^18.3-alpha.0",allows-prereleases = true}
 pylint = "^2.3"
 
 [tool.poetry.scripts]
-Rimoto_serve='Rimoto_plex_companion.server:main'
-Rimoto_scan='Rimoto_plex_companion.scanner:main'
-Rimoto_sonarr='Rimoto_plex_companion.add_to_queue:sonarr'
-Rimoto_radarr='Rimoto_plex_companion.add_to_queue:radarr'
+rimoto_serve='rimoto_plex_companion.server:main'
+rimoto_scan='rimoto_plex_companion.scanner:main'
+rimoto_sonarr='rimoto_plex_companion.add_to_queue:sonarr'
+rimoto_radarr='rimoto_plex_companion.add_to_queue:radarr'
 
 [build-system]
 requires = ["poetry>=0.12"]
