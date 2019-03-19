@@ -114,7 +114,6 @@ def main():
                     inbound.remove(doc_ids=[rec.doc_id])
             except OSError as e:
                 logger.error(f"Failed to scan in file. Due to OSERROR\n\n{e}\n\nremote_path:{rec['remote_path']}\ncategory:{category}\nLocalPath:{local_path}")
-        sleep(60)
 
 if __name__ == "__main__":
     main()
