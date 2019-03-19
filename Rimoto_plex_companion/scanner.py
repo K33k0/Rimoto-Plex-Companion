@@ -12,11 +12,13 @@ from logzero import logger
 db = TinyDB("db.json", sort_keys=True, indent=4, separators=(',', ': '))
 inbound = db.table("inbound")
 success = db.table("success")
+errors = db.table("error")
 base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
 plex_db_path = "C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
 logfile = "I:/Logs/Rimoto/scanner.log"
 plex_scanner_path="E:/Utils/Plex/Plex Media Scanner.exe"
+minutes_check_for_path_existence=1
 
 logzero.logfile(logfile, maxBytes=4028)
 
@@ -39,15 +41,15 @@ def remote_file_to_local_file(remote_file_path):
     return PureWindowsPath(file_path)
 
 def wait_path(windows_file_path):
-    for i in range(100):
+    for i in range(minutes_check_for_path_existence*6):
         if Path(windows_file_path).exists():
             return True
-        logger.warning(f"Path existense check {i}/100")
+        logger.warning(f"{windows_file_path} existense check {i}/{minutes_check_for_path_existence*6}")
+        sleep(10)
     else:
         return False
 
 def import_to_plex(windows_folder_path:Path , section):
-    logger.debug(Path(windows_folder_path).is_dir())
     if not Path(windows_folder_path).is_dir():
         logger.error("Path is not a directory")
         return False
@@ -93,16 +95,25 @@ def verify_import_in_db(windows_file_path: PureWindowsPath):
 def main():
     while True:
         for rec in inbound.all():
-            category = get_media_category(rec['remote_path'])
-            local_path = remote_file_to_local_file(rec['remote_path'])
-            local_path_existence = wait_path(local_path)
-            if not local_path_existence:
-                logger.warning("Local path timed out. Not found.")
-            plex_import = import_to_plex(Path(local_path).parent, category)
-            local_file_imported = verify_import_in_db(local_path)
-            if local_file_imported:
-                success.insert(local_file_imported)
-                inbound.remove(doc_ids=[rec.doc_id])
+            category = None
+            local_path = None
+            local_path_existence = None
+            plex_import = None
+            local_file_imported = None
+            try:
+                category = get_media_category(rec['remote_path'])
+                local_path = remote_file_to_local_file(rec['remote_path'])
+                local_path_existence = wait_path(local_path)
+                if not local_path_existence:
+                    logger.warning("Local path timed out. Not found.")
+                    continue
+                plex_import = import_to_plex(Path(local_path).parent, category)
+                local_file_imported = verify_import_in_db(local_path)
+                if local_file_imported:
+                    success.insert(local_file_imported)
+                    inbound.remove(doc_ids=[rec.doc_id])
+            except OSError as e:
+                logger.error(f"Failed to scan in file. Due to OSERROR\n\n{e}\n\nremote_path:{rec['remote_path']}\ncategory:{category}\nLocalPath:{local_path}")
         sleep(60)
 
 if __name__ == "__main__":
