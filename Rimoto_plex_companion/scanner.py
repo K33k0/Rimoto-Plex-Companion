@@ -3,16 +3,17 @@ import sqlite3
 import subprocess
 from pathlib import Path, PureWindowsPath
 from time import sleep
+from datetime import datetime as dt
 
 from tinydb import TinyDB
 import hug
 import logzero
 from logzero import logger
+from sqlalchemy import or_
 
-db = TinyDB("db.json", sort_keys=True, indent=4, separators=(',', ': '))
-inbound = db.table("inbound")
-success = db.table("success")
-errors = db.table("error")
+from rimoto_plex_companion.db_init import Session, Media
+
+
 base_rclone_media_path = "C:/Media"
 remote_mount_folder_name = "gcache"
 plex_db_path = "C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db"
@@ -30,6 +31,8 @@ path_keys = [
     ("Family", "13"),
 ]
 
+
+session = Session()
 
 def get_media_category(remote_file_path):
     for key,section in path_keys:
@@ -67,9 +70,12 @@ def import_to_plex(windows_folder_path:Path , section):
 
 def verify_import_in_db(windows_file_path: PureWindowsPath):
     plex_db = sqlite3.connect(plex_db_path)
+    logger.debug(plex_db)
     cursor = plex_db.cursor()
+    logger.debug(cursor)
     cursor.execute(f"SELECT * FROM media_parts WHERE file=?", (str(windows_file_path),))
     db_result = cursor.fetchone()
+    logger.debug(db_result)
     try:
         logger.debug(f"We found it! {db_result}")
         response = dict(
@@ -94,26 +100,34 @@ def verify_import_in_db(windows_file_path: PureWindowsPath):
 
 def main():
     while True:
-        for rec in inbound.all():
+        for rec in session.query(Media).filter(or_(Media.downloaded_at > Media.scanned_at, Media.scanned_at.is_(None), Media.scanned_at.is_(None) )).all():
+            logger.debug(rec)
             category = None
             local_path = None
             local_path_existence = None
-            plex_import = None
             local_file_imported = None
             try:
-                category = get_media_category(rec['remote_path'])
-                local_path = remote_file_to_local_file(rec['remote_path'])
+                category = get_media_category(rec.path)
+                local_path = remote_file_to_local_file(rec.path)
                 local_path_existence = wait_path(local_path)
                 if not local_path_existence:
+                    if not rec.scan_attempts:
+                        rec.scan_attempts = 1
+                    else:
+                        rec.scan_attempts += 1
+
                     logger.warning("Local path timed out. Not found.")
                     continue
                 plex_import = import_to_plex(Path(local_path).parent, category)
                 local_file_imported = verify_import_in_db(local_path)
                 if local_file_imported:
-                    success.insert(local_file_imported)
-                    inbound.remove(doc_ids=[rec.doc_id])
+                    rec.scanned_at = dt.utcnow()
             except OSError as e:
                 logger.error(f"Failed to scan in file. Due to OSERROR\n\n{e}\n\nremote_path:{rec['remote_path']}\ncategory:{category}\nLocalPath:{local_path}")
-
+        else:
+            logger.info("No records found!")
+            sleep(30)
+        session.commit()
+        sleep(30)
 if __name__ == "__main__":
     main()

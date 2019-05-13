@@ -28,6 +28,7 @@ def test_scan():
     test_path = PureWindowsPath(test_path)
     assert __scan(test_path, 13) is True
 
+
 def test_verify():
     test_path = "/home15/r0v51jiozjqo/gcache/Anime/Black Clover/Season 1/Black Clover - S01E72 - St. Elmo’s Fire HDTV-1080p.mkv"
     assert __verify_import(test_path) is not False
