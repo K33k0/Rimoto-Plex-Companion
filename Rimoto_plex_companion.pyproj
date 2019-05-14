@@ -38,6 +38,7 @@
   <ItemGroup>
     <Content Include="Rimoto_plex_companion\.gitignore" />
     <Content Include="Rimoto_plex_companion\server\templates\layout.html" />
+    <Content Include="Rimoto_plex_companion\server\templates\added.html" />
     <Content Include="Rimoto_plex_companion\server\templates\queue.html" />
     <Content Include="userscripts\radarr-remote-scanner.userscript.js" />
     <Content Include="userscripts\sonarr-remote-scanner.userscript.js" />

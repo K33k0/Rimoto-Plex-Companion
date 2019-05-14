@@ -23,18 +23,22 @@ def add_to_queue(path):
     total_added = end - start
     logger.info(f'Added {end - start} record(s)')
     db.session.commit()
-    data = {'path': path, 'date_added': dt.utcnow(), 'total_records': end, 'total_added': total_added}
+    data = {'path': path, 'date_added': dt.now(), 'total_records': end, 'total_added': total_added}
     return data
 
 def view_queue():
     rows = Media.query.filter_by(scanned_at=None).all()
     return rows
 
+def recent_added():
+    rows = Media.query.order_by(Media.scanned_at.desc()).limit(50)
+    return rows
+
 class Media(db.Model):
     __bind_key__ = 'rimoto'
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(300))
-    downloaded_at = db.Column(db.DateTime, default=dt.utcnow)
+    downloaded_at = db.Column(db.DateTime, default=dt.now)
     scanned_at = db.Column(db.DateTime)
     version_num = db.Column(db.Integer)
     scan_attempts = db.Column(db.Integer)

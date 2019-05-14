@@ -19,6 +19,11 @@ def view_queue_path():
     queue = model.view_queue()
     return render_template('queue.html', queue=queue)
 
+@app.route('/added')
+def view_recently_added():
+    items = model.recent_added()
+    return render_template('added.html', items=items)
+
 @app.after_request
 def add_header(r):
     """
