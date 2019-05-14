@@ -1,0 +1,26 @@
+﻿{% extends "layout.html" %}
+{% block title %}
+Queued items
+{% endblock %}
+
+{% block content %}
+    <div class="nes-table-responsive">
+        <table class="nes-table is-bordered">
+            <thead>
+                <tr>
+                    <th>Path</th>
+                    <th>Date Added</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in queue %}
+                <tr>
+                    <td>{{ i.path }}</td>
+                    <td>{{ i.downloaded_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

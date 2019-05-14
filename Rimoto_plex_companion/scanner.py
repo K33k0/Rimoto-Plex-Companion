@@ -5,13 +5,12 @@ from pathlib import Path, PureWindowsPath
 from time import sleep
 from datetime import datetime as dt
 
-from tinydb import TinyDB
-import hug
 import logzero
 from logzero import logger
-from sqlalchemy import or_
 
-from rimoto_plex_companion.db_init import Session, Media
+from Rimoto_plex_companion import model
+from Rimoto_plex_companion.model import Media
+
 
 
 base_rclone_media_path = "C:/Media"
@@ -32,7 +31,6 @@ path_keys = [
 ]
 
 
-session = Session()
 
 def get_media_category(remote_file_path):
     for key,section in path_keys:
@@ -100,7 +98,7 @@ def verify_import_in_db(windows_file_path: PureWindowsPath):
 
 def main():
     while True:
-        for rec in session.query(Media).filter(or_(Media.downloaded_at > Media.scanned_at, Media.scanned_at.is_(None), Media.scanned_at.is_(None) )).all():
+        for rec in Media.query.filter(model.db.or_(Media.downloaded_at > Media.scanned_at, Media.scanned_at.is_(None), Media.scanned_at.is_(None) )).all():
             logger.debug(rec)
             category = None
             local_path = None
@@ -127,7 +125,7 @@ def main():
         else:
             logger.info("No records found!")
             sleep(30)
-        session.commit()
+        model.db.session.commit()
         sleep(30)
 if __name__ == "__main__":
     main()

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
+
+    <style>
+        html, body, pre, code, kbd, samp {
+            font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rimoto Plex Companion</h1>
+    <br />
+    <div class="nes-container with-title">
+        <p class="title">
+            {% block title %}
+            {% endblock %}
+        </p>
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
