@@ -1,29 +1,18 @@
 [tool.poetry]
 name = "rimoto_plex_companion"
 version = "0.1.0"
-description = "Rclone Mount Compatible, media scanner - sonarr or radarr straight to plex."
+description = ""
 authors = ["Kieran <3812864+MDCEY@users.noreply.github.com>"]
-license = "MIT"
-include = ["userscripts/*"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+flask = "^1.0"
+flask-sqlalchemy = "^2.4"
+flask-wtf = "^0.14.2"
 logzero = "^1.5"
-hug = "^2.4"
-tinydb = "^3.13"
-sqlalchemy = "^1.3"
 
 [tool.poetry.dev-dependencies]
-black = {version = "^18.3-alpha.0",allows-prereleases = true}
-pylint = "^2.3"
-
-[tool.poetry.scripts]
-rimoto_serve='rimoto_plex_companion.server:main'
-rimoto_scan='rimoto_plex_companion.scanner:main'
-rimoto_sonarr='rimoto_plex_companion.add_to_queue:sonarr'
-rimoto_radarr='rimoto_plex_companion.add_to_queue:radarr'
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-

@@ -10,3 +10,4 @@ db.json
 /env
 /obj/Debug
 /bin
+.mypy_cache/

@@ -1,15 +1,15 @@
 ﻿{% extends "layout.html" %}
-{% block title %}
-Queued items
-{% endblock %}
+{% block title %}Queued items{% endblock %}
 
 {% block content %}
-    <div class="nes-table-responsive">
-        <table class="nes-table is-bordered">
+    <div class="container">
+        <table class="table is-striped is-fullwidth">
             <thead>
                 <tr>
                     <th>Path</th>
                     <th>Date Added</th>
+                    <th>Scan attempts</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,10 +17,24 @@ Queued items
                 <tr>
                     <td>{{ i.path }}</td>
                     <td>{{ i.downloaded_at }}</td>
+                    <td>{{ i.scan_attempts }}</td>
+                    <td><a class="button is-danger">Delete</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <script>
+        delete_buttons = document.getElementsByClassName('button')
+        console.log(delete_buttons)
+        for (let index = 0; index < delete_buttons.length; index++) {
+            delete_buttons[index].addEventListener('click', function(event){
+                path = event.target.parentElement.parentElement.cells[0].textContent
+                socket.emit('delete path from queue', {data: path})
+                event.target.parentElement.parentElement.remove()
+            }, false)
 
+        }
+        
+    </script>
 {% endblock %}
