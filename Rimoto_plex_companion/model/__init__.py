@@ -2,16 +2,19 @@
 from datetime import datetime as dt
 from flask_sqlalchemy import SQLAlchemy
 from logzero import logger
+from flask_wtf import FlaskForm
+from wtforms import StringField, FileField, IntegerField
+from wtforms.validators import DataRequired, regexp
 
 from Rimoto_plex_companion.server import app
 from Rimoto_plex_companion import config as cfg
 
-app.config['SQLALCHEMY_DATABASE_URI'] = cfg.plex_library_db_connection_string
-app.config['SQLALCHEMY_BINDS'] = {
-        'rimoto': cfg.rimoto_db_connection_string
-    }
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = cfg.db_track_modifications
-app.config['SQLALCHEMY_ECHO'] = cfg.db_echo
+
+app.config["SQLALCHEMY_DATABASE_URI"] = cfg.plex_library_db_connection_string
+app.config["SQLALCHEMY_BINDS"] = {"rimoto": cfg.rimoto_db_connection_string}
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = cfg.db_track_modifications
+app.config["SQLALCHEMY_ECHO"] = cfg.db_echo
+app.config["SECRET_KEY"] = cfg.secret_key
 db: SQLAlchemy = SQLAlchemy(app)
 
 
@@ -22,12 +25,14 @@ def add_to_queue(path):
     db.session.add(row)
     end = Media.query.count()
     total_added = end - start
-    logger.info(f'Added {end - start} record(s)')
+    logger.info(f"Added {end - start} record(s)")
     db.session.commit()
-    data = {'path': path,
-            'date_added': dt.now(),
-            'total_records': end,
-            'total_added': total_added}
+    data = {
+        "path": path,
+        "date_added": dt.now(),
+        "total_records": end,
+        "total_added": total_added,
+    }
     return data
 
 
@@ -52,7 +57,7 @@ def delete_from_queue(path):
 class Media(db.Model):
     """Media table for rimoto from local db."""
 
-    __bind_key__ = 'rimoto'
+    __bind_key__ = "rimoto"
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(300))
     downloaded_at = db.Column(db.DateTime, default=dt.now)
@@ -62,16 +67,17 @@ class Media(db.Model):
 
     def __repr__(self):
         """Print a human readable response of Media table."""
-        return f'path: {self.path}, downloaded_at: {self.downloaded_at}, scanned_at: {self.scanned_at}'
+        return f"path: {self.path}, downloaded_at: {self.downloaded_at}, scanned_at: {self.scanned_at}"
 
 
 class MediaParts(db.Model):
     """Media table from main plex db. Which is auto generated."""
 
-    __table_args__ = {
-        'autoload': True,
-        'autoload_with': db.engine
-    }
+    __table_args__ = {"autoload": True, "autoload_with": db.engine}
+
+
+class AddToQueue(FlaskForm):
+    path = StringField("path", validators=[DataRequired()])
 
 
 db.create_all()

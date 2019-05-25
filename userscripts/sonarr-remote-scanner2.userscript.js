@@ -27,7 +27,7 @@ function waitForElementToDisplay(selector, time) {
     if (document.querySelector(selector) != null) {
         let elem = document.querySelector(selector);
         elem.addEventListener("click", function (e) {
-            console.log("Sending scan request for "+ e.target.innerText)
+            console.log("Sending scan request for "+ e.target.innerText);
             sendScanRequest(e.target.innerText)
         });
         waitForElementToDissapear(selector, time)

@@ -2,6 +2,17 @@
 {% block title %}Queued items{% endblock %}
 
 {% block content %}
+
+    <div class="container">
+        <div class="control ">
+          <form method="POST" action="/queue/add" class="columns">
+              {{ form.hidden_tag() }}
+              {{ form.path(class_="input is-four-fifths") }}
+              <input type="submit" class="button is-primary" value="submit">
+          </form>
+        </div>
+    </div>
+    <br>
     <div class="container">
         <table class="table is-striped is-fullwidth">
             <thead>
@@ -25,16 +36,16 @@
         </table>
     </div>
     <script>
-        delete_buttons = document.getElementsByClassName('button')
-        console.log(delete_buttons)
+        delete_buttons = document.getElementsByClassName('button');
+        console.log(delete_buttons);
         for (let index = 0; index < delete_buttons.length; index++) {
             delete_buttons[index].addEventListener('click', function(event){
-                path = event.target.parentElement.parentElement.cells[0].textContent
-                socket.emit('delete path from queue', {data: path})
+                path = event.target.parentElement.parentElement.cells[0].textContent;
+                socket.emit('delete path from queue', {data: path});
                 event.target.parentElement.parentElement.remove()
             }, false)
-
         }
+
         
     </script>
 {% endblock %}
