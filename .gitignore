@@ -12,3 +12,4 @@ db.json
 /bin
 .mypy_cache/
 Rimoto_plex_companion/server/rimoto.db
+rimoto.db
