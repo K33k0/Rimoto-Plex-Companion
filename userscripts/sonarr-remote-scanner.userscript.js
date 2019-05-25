@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name     Sonarr: Plex scan
-// @version  1
+// @version  1.0.1
 // @include  https://k33k00.com/sonarr/calendar
+// @updateURL https://raw.githubusercontent.com/MDCEY/Rimoto_plex_companion/develop/userscripts/sonarr-remote-scanner.userscript.js
 // ==/UserScript==
 
 
@@ -14,7 +15,7 @@ function reqListener() {
 
 
 function sendScanRequest(path) {
-    let url = `${serverUrl}?remote_file_path=${path}`;
+    let url = `${serverUrl}?remote_file_path=${encodeURI(path)}`;
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", reqListener);
     oReq.open("GET", url);

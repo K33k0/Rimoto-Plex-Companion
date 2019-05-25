@@ -1,6 +1,14 @@
 .pytest_cache
-plex_scanner.egg-info
 venv
 .idea
-
 *.pyc
+\.vscode/
+__pycache__
+.venv
+rimoto_plex_companion.egg-info/
+db.json
+/env
+/obj/Debug
+/bin
+.mypy_cache/
+Rimoto_plex_companion/server/rimoto.db

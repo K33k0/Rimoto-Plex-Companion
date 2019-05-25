@@ -2,6 +2,7 @@
 // @name     Radarr: Plex scan
 // @version  1
 // @include  https://k33k00.com/radarr/activity/history
+// @updateURL https://raw.githubusercontent.com/MDCEY/Rimoto_plex_companion/develop/userscripts/radarr-remote-scanner.userscript.js
 // ==/UserScript==
 
 
