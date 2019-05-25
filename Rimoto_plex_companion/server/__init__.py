@@ -61,5 +61,4 @@ def view_recently_added():
 
 @app.route("/settings")
 def view_settings():
-    data = {"scanner_id": tasks.scanner_id}
-    return render_template("config.html", settings=data)
+    return render_template("config.html", settings=tasks.scanner_data)

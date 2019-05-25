@@ -29,12 +29,10 @@ path_keys = cfg.media_path_keys
 class Scanner:
     def __init__(self, interval=60):
         self.interval = interval
-        thread = threading.Thread(target=self.main, args=())
-        thread.daemon = True
-        thread.start()
-        self.thread_id = thread.ident
-        self.thread_active = thread.is_alive
-        logger.info(f"Initialized scanner {thread.ident}")
+        self.thread = threading.Thread(target=self.main, args=())
+        self.thread.daemon = True
+        self.thread.start()
+        logger.info(f"Initialized scanner {self.thread.ident}")
 
     def get_media_category(self, remote_file_path):
         """Loop through path keys and compare to path to generate category."""
@@ -121,5 +119,7 @@ class Scanner:
 
 
 scanner_task = Scanner()
-scanner_id = scanner_task.thread_id
-scanner_running = scanner_task.thread_active()
+scanner_data = {
+    'id': scanner_task.thread.ident,
+    'is_alive' : scanner_task.thread.is_alive()
+}
