@@ -39,9 +39,9 @@ def add_to_queue(path):
     return data
 
 
-def view_queue():
+def get_queue():
     """Return all rows from sql db that have no 'scanned at' value."""
-    rows = Media.query.filter_by(scanned_at=None).all()
+    rows = Media.query.filter((Media.downloaded_at > Media.scanned_at) | (Media.scanned_at.is_(None))).all()
     return rows
 
 

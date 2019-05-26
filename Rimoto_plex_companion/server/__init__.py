@@ -47,7 +47,7 @@ def view_queue_path():
     form = model.AddToQueue()
     if form.validate_on_submit():
         return redirect("/queue")
-    queue = model.view_queue()
+    queue = model.get_queue()
     return render_template("queue.html", queue=queue, form=form)
 
 
