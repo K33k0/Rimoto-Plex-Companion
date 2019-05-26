@@ -1,3 +1,6 @@
+# TODO: Rename variables to a readable form
+# TODO: Comment any code that isn't straight forward
+# TODO: Take a look into splitting the code into smaller modules. Eg- DB,View_models, Forms etc
 """Contains all db declarations and models for RPC."""
 from datetime import datetime as dt
 from flask_sqlalchemy import SQLAlchemy

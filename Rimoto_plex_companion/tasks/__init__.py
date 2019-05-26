@@ -1,3 +1,6 @@
+# TODO: Rename variables to a readable form
+# TODO: Comment any code that isn't straight forward
+# TODO: There has to be a way to make this cleaner
 import threading
 import time
 import os

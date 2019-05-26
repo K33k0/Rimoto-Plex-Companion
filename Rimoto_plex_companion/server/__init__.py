@@ -1,3 +1,8 @@
+# TODO: Rename variables to a readable form
+# TODO: Comment any code that isn't straight forward
+# TODO: See if there is a way to make a route simply return a render template
+# TODO: Anything that doesn't return a template is technically an api call. Make them!
+# TODO: Split API, socket calls etc into seperate models
 """The code behind the server, including the routes and socketio stuff."""
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_socketio import SocketIO
