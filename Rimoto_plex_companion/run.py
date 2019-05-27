@@ -26,13 +26,16 @@ app.config["SECRET_KEY"] = cfg.secret_key
 db = SQLAlchemy(app)
 socketio = SocketIO(app)
 
+from Rimoto_plex_companion.routes import index_route
+
+app.register_blueprint(index_route)
 
 # VIEWS
-@app.route("/")
-def index():
-    """Render the index template and serve."""
-    logger.debug('Serving index')
-    return render_template("index.html")
+# @app.route("/")
+# def index():
+#     """Render the index template and serve."""
+#     logger.debug('Serving index')
+#     return render_template("index.html")
 
 
 @app.route("/scan", methods=["POST"])
