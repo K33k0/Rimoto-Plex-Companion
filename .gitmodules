@@ -1,0 +1,3 @@
+[submodule "rimoto-frontend"]
+	path = rimoto-frontend
+	url = https://github.com/MDCEY/rimoto-frontend.git
