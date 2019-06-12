@@ -4,7 +4,9 @@ from datetime import datetime as dt
 import subprocess
 from time import sleep
 from datetime import datetime as dt
-
+import logzero
+logzero.logfile('E:/logs/rimoto_api.log')
+logger = logzero.logger
 
 def count_all_records(session,table):
     return session.query(table).count()
@@ -89,9 +91,9 @@ def plex_scanner(path, section):
     result.wait()
     
 def manual_import(path, section_id, plex_session, plex_table, rim_table, rim_session, id):
-    print(f'Starting scan for {path}')
+    logger.info(f'Starting scan for {path}')
     if not local_path_exists(path):
-        print(f'{path} not yet available')
+        logger.warning(f'{path} not yet available')
         return "Path not available yet"
     plex_scanner(path, section_id)
     if not check_import(plex_session, plex_table, path):
@@ -102,7 +104,7 @@ def manual_import(path, section_id, plex_session, plex_table, rim_table, rim_ses
     
 def scan_all(plex_session, plex_table, rimoto_session, rimoto_table):
     unscanned = list_unscanned(rimoto_session, rimoto_table, limit=30)
-    print(f'Scanning {len(unscanned)} files into plex')
+    logger.info(f'Scanning {len(unscanned)} files into plex')
     for media in unscanned:
         manual_import(media['path'], media['library_id'], plex_session, plex_table, rimoto_table, rimoto_session, media['id'])
         sleep(10)

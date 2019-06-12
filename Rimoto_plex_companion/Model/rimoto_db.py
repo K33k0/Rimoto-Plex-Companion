@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from datetime import datetime as dt
 
 
-engine = create_engine('sqlite:///rimoto.db')
+engine = create_engine('sqlite:///E:/db/rimoto.db')
 Base = declarative_base()
 
 
@@ -23,6 +23,5 @@ class Rimoto(Base):
     scan_attempts = Column(Integer, default=0)
 
 Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-
-# TEST
+session_factory = sessionmaker(bind=engine)
+Session = scoped_session(session_factory)
