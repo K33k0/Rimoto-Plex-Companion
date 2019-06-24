@@ -175,3 +175,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+\.vscode/
+
+Rimoto_plex_companion/\.idea/misc\.xml
+
+Rimoto_plex_companion/\.idea/modules\.xml
+
+Rimoto_plex_companion/\.idea/Rimoto_plex_companion\.iml
+
+Rimoto_plex_companion/\.idea/workspace\.xml
