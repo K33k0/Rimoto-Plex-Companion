@@ -8,8 +8,6 @@ from logzero import logger
 
 from Rimoto_plex_companion.Model.rimoto_db import Rimoto, Session as r_session
 from Rimoto_plex_companion.Model.plex_db import Plex, Session as p_session
-# TODO: UNUSED VARIABLE:  (next-line)
-# 'from Rimoto_plex_companion.Model.selections import count_all_records'
 from Rimoto_plex_companion.Model.selections import list_unscanned
 from Rimoto_plex_companion.Model.selections import list_recently_scanned
 from Rimoto_plex_companion.Model.selections import add_to_queue
