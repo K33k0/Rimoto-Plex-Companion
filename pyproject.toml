@@ -12,6 +12,13 @@ logzero = "^1.5"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.3"
+pytest = "^5.0"
+mypy = "^0.711.0"
+flake8 = "^3.7"
+coverage = "^4.5"
+flake8-bugbear = "^19.3"
+bandit = "^1.6"
+pydocstyle = "^3.0"
 
 
 [tool.poetry.scripts]

@@ -1,0 +1,16 @@
+[MASTER]
+persistent=yes
+load-plugins=pylint.extensions.docparams,pylint.extensions.bad_builtin,pylint.extensions.mccabe
+jobs=0
+
+# docparams - STRICT
+accept-no-param-doc=no
+accept-no-raise-doc=no
+accept-no-return-doc=no
+
+# mccabe - STRICT
+max-complexity=8
+
+[REPORTS]
+output-format=text
+reports=yes
