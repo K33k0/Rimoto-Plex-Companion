@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, Boolean
-from sqlalchemy.ext.automap import automap_base
+from datetime import datetime as dt
+
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from datetime import datetime as dt
 
 
 engine = create_engine('sqlite:///E:/db/rimoto.db')
@@ -11,7 +11,7 @@ Base = declarative_base()
 
 class Rimoto(Base):
     __tablename__ = 'rimoto'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     remote_path = Column(String)
     library_name = Column(String)
     library_id = Column(Integer)
@@ -21,6 +21,7 @@ class Rimoto(Base):
     scanned_at = Column(DateTime)
     version_number = Column(Integer, default=0)
     scan_attempts = Column(Integer, default=0)
+
 
 Base.metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine)

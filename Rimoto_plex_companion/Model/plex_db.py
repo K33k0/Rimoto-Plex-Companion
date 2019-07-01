@@ -1,8 +1,7 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from datetime import datetime as dt
+
 
 engine = create_engine('sqlite:///C:/.plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db')
 metadata = MetaData()
@@ -13,4 +12,3 @@ Plex = Base.classes.media_parts
 
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
-    
