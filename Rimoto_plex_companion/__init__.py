@@ -97,7 +97,7 @@ def start_tasks():
 
 ROUTER.get('/queue')(show_queue)
 ROUTER.get('/recent')(get_recent)
-ROUTER.post('/scan')(show_queue)
+ROUTER.post('/scan')(new_path)
 ROUTER.post('/delete')(delete_path)
 ROUTER.post('/manualscan')(scan)
 ROUTER.get('/scan_all')(scan_all_unscanned)
