@@ -26,10 +26,10 @@ def start_tasks():
     while True:
         scan_all()
         try:
-            next_call += 300
+            next_call += 10
             time.sleep(next_call - time.time())
         except ValueError:
-            time.sleep(300)
+            time.sleep(10)
             next_call = time.time()
 
 
@@ -46,4 +46,4 @@ def main():
     timer_thread = threading.Thread(target=start_tasks)
     timer_thread.daemon = True
     timer_thread.start()
-    hug.development_runner.hug(module=__name__, host='127.0.0.1',port=8000)
+    hug.development_runner.hug(module=__name__, host='127.0.0.1', port=8000)

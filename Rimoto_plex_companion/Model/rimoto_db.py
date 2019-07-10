@@ -24,5 +24,5 @@ class Rimoto(Base):
 
 
 Base.metadata.create_all(engine)
-session_factory = sessionmaker(bind=engine)
-Session = scoped_session(session_factory)
+SESSION_FACTORY = sessionmaker(bind=engine)
+Session = scoped_session(SESSION_FACTORY)

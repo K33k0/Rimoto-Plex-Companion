@@ -9,6 +9,8 @@ python = "^3.7"
 sqlalchemy = "^1.3"
 hug = "^2.5"
 logzero = "^1.5"
+PyMySQL = "^0.9.3"
+MySQL-python = "^1.2"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.3"
@@ -24,6 +26,7 @@ rope = "^0.14.0"
 
 [tool.poetry.scripts]
 serve = "Rimoto_plex_companion:main"
+add = "Rimoto_plex_companion.add_to_db:main"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"

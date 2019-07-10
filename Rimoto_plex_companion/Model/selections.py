@@ -4,6 +4,8 @@ import os
 from datetime import datetime as dt
 import subprocess
 from time import sleep
+
+import hug
 import logzero
 
 from Rimoto_plex_companion.Model.rimoto_db import Rimoto
@@ -15,13 +17,7 @@ logzero.logfile('E:/logs/rimoto_api.log')
 LOGGER = logzero.logger
 
 
-def count_all_records() -> int:
-    """Count all records in the database.
-
-    Returns:
-        The total number of records within the database
-
-    """
+def count_all_records():
     session = rimoto_session()
     data = session.query(Rimoto).count()
     rimoto_session.remove()
@@ -29,13 +25,6 @@ def count_all_records() -> int:
 
 
 def list_unscanned():
-    """Fetch all media that is unscanned.
-
-    Returns:
-        List[Dict[str,Any]]: All records that have not been scanned in the background thread along
-        with information about each piece of media
-
-    """
     session = rimoto_session()
     rows = session.query(Rimoto).filter((Rimoto.downloaded_at > Rimoto.scanned_at) | (Rimoto.scanned_at.is_(None))).all()
     rimoto_session.remove()
@@ -54,16 +43,7 @@ def list_unscanned():
     } for row in rows]
 
 
-def list_recently_scanned(limit: int = 20):
-    """List recent scanned media.
-
-    Args:
-        limit: Max amount of records to return
-
-    Returns:
-        List[Dict[str,Any]]: All records that haven't been scanned been the Rimoto scanner
-
-    """
+def list_recently_scanned(limit: hug.types.number = 20):
     session = rimoto_session()
     rows = session.query(Rimoto).order_by(Rimoto.scanned_at.desc()).limit(limit)
     rimoto_session.remove()
@@ -78,12 +58,6 @@ def list_recently_scanned(limit: int = 20):
 
 
 def delete_from_queue(path):
-    """Delete a record from the rimoto table based on the path name.
-
-    Args:
-        path (str): Search the database for this string
-
-    """
     session = rimoto_session()
     session.query(Rimoto).filter_by(path=path).delete()
     session.commit()
@@ -91,15 +65,6 @@ def delete_from_queue(path):
 
 
 def convert_to_local_path(path):
-    """Use the remote path passed in and convert it to your local filesystem path.
-
-    Args:
-        path (str): The path to convert
-
-    Returns:
-        PureWindowsPath: Return the local path from the remote path that was passed
-
-    """
     base_media_path = "C:/Media"
     remote_mount_folder_name = "gcache"
     universal_path = path.split(remote_mount_folder_name)[1]
@@ -109,15 +74,6 @@ def convert_to_local_path(path):
 
 
 def media_group(path):
-    """Use the path, parse the library name and id.
-
-    Args:
-        path (PureWindowsPath): The local path of the selected media file
-
-    Returns:
-        Tuple: Firstly the library name and then library id for the media file
-
-    """
     plex_libs = dict(
         Movies='2',
         Anime='3',
@@ -133,31 +89,31 @@ def media_group(path):
 
 
 def add_to_queue(path):
-    """Add the parsed path to the rimoto database.
-
-    Args:
-        path (str): The remote path to add
-
-    """
     session = rimoto_session()
     local_path = convert_to_local_path(path)
     library = media_group(local_path)
     row = Rimoto(path=str(local_path), remote_path=path, library_name=library[0], library_id=library[1])
     session.add(row)
     session.commit()
+    row = session.query(Rimoto).filter_by(remote_path=path).first()
     rimoto_session.remove()
+    data = [{
+        'id': row.id,
+        'path': row.path,
+        'remote_path': row.remote_path,
+        'exists_locally': row.exists_locally,
+        'downloaded_at': row.downloaded_at,
+        'scanned_at': row.scanned_at,
+        'version_number': row.version_number,
+        'scan_attempts': row.scan_attempts,
+        'library_name': row.library_name,
+        'library_id': row.library_id
+    }]
+    print(data)
+    return data
 
 
 def check_import(path):
-    """Check for path in plex db. Verifies the import was successful.
-
-    Args:
-        path (str): the to check for on the local filesystem
-
-    Returns:
-        Dict: The id of and file path in the plex db if it exists or nothing
-
-    """
     session = plex_session()
     db_result = session.query(Plex).filter(
         Plex.file == path).first()
@@ -168,15 +124,6 @@ def check_import(path):
 
 
 def local_path_exists(path):
-    """Check for path in local filesystem.
-
-    Args:
-        path (str): check this path exists
-
-    Returns:
-        bool: True if the file exists else false
-
-    """
     return Path(path).exists()
 
 
@@ -210,6 +157,6 @@ def scan_all():
     unscanned = list_unscanned()
     for media in unscanned:
         manual_import(media['path'],
-                      media['library_id'], 
+                      media['library_id'],
                       media['id'])
         sleep(10)
